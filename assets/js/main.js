@@ -63,7 +63,7 @@ tabs.forEach(tabs =>{
 })
 
 /*typing*/
-const texts = ['website', 'IT Specialist', ' developer'];
+const texts = ['Curious', 'IT Passionate', 'Helpful'];
 let count = 0;
 let index = 0;
 let currentText = '';
@@ -88,60 +88,30 @@ let letter = '';
 
 
 /*==================== DARK LIGHT THEME ====================*/ 
-const themeButton = document.getElementById('theme-button')
-const darkTheme = 'dark-theme'
-/*const iconTheme = 'bx-sun'
+const themeButton = document.getElementById('theme-button');
+const darkTheme = 'dark-theme';
 
-// Previously selected topic (if user selected)
-const selectedTheme = localStorage.getItem('selected-theme')
-const selectedIcon = localStorage.getItem('selected-icon')
+themeButton.addEventListener('click', () => {
+    document.body.classList.toggle(darkTheme);
+});
 
-// We obtain the current theme that the interface has by validating the dark-theme class
-const getCurrentTheme = () => document.body.classList.contains(darkTheme) ? 'dark' : 'light'
-const getCurrentIcon = () => themeButton.classList.contains(iconTheme) ? 'bx-moon' : 'bx-sun'
+// Skills Accordion
+const skillsContent = document.getElementsByClassName('skills__content');
+const skillsHeader = document.querySelectorAll('.skills__header');
 
-// We validate if the user previously chose a topic
-if (selectedTheme) {
-  // If the validation is fulfilled, we ask what the issue was to know if we activated or deactivated the dark
-  document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
-  themeButton.classList[selectedIcon === 'bx-moon' ? 'add' : 'remove'](iconTheme)
-}*/
-
-// Activate / deactivate the theme manually with the button
-themeButton.addEventListener('click', () =>{
-    // Add or remove the dark / icon theme
-    document.body.classList.toggle(darkTheme)
-    //themeButton.classList.toggle(iconTheme)
-    // We save the theme and the current icon that the user chose
-    //localStorage.setItem('selected-theme', getCurrentTheme())
-    //localStorage.setItem('selected-icon', getCurrentIcon())
-})
-
-//skilss//
-
-const skillsContent = document.getElementsByClassName('skills__content'),
-    skillsHeader = document.querySelectorAll('.skills__header')
-
-
-function toggleSkills(){
-    let itemClass = this.parentNode.className
-
-    for(i = 0;i < skillsContent.length; i++){
-        skillsContent[i].className = 'skills__content skills__close'
+function toggleSkills() {
+    let itemClass = this.parentNode.className;
+    for (let i = 0; i < skillsContent.length; i++) {
+        skillsContent[i].className = 'skills__content skills__close';
     }
-    if(itemClass === 'skills__content skills__close'){
-        this.parentNode.className = 'skills__content skills__open'
+    if (itemClass === 'skills__content skills__close') {
+        this.parentNode.className = 'skills__content skills__open';
     }
-
 }
 
-skillsHeader.forEach((el) =>{
-    el.addEventListener('click',toggleSkills)
-})
-
-
-
-
+skillsHeader.forEach((el) => {
+    el.addEventListener('click', toggleSkills);
+});
 
 
 window.addEventListener('scroll', scrollActive)
@@ -167,5 +137,67 @@ for (var i = 0; i < 100; i++) {
     $('body').append(star);
 }
 
+// THUNDER EFFECT FOR DARK MODE
 
-  
+function createThunderBolt() {
+    if (!document.body.classList.contains('dark-theme')) return;
+    const boltsContainer = document.querySelector('.thunder-bolts');
+    let bolt;
+    if (Math.random() > 0.5) {
+        // SVG zigzag bolt
+        bolt = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        bolt.setAttribute("width", "32");
+        bolt.setAttribute("height", "80");
+        bolt.setAttribute("viewBox", "0 0 32 80");
+        bolt.style.position = "absolute";
+        bolt.style.left = Math.random() * 90 + 'vw';
+        bolt.style.top = (Math.random() * 80 + 5) + 'vh';
+        bolt.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+        bolt.style.opacity = "0.92";
+        bolt.style.filter = "drop-shadow(0 0 16px #fff) drop-shadow(0 0 32px #6ec6ff)";
+        bolt.style.zIndex = "9999";
+        bolt.innerHTML = `<polyline points="16,0 10,30 22,40 12,60 20,80"
+            style="fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.92;stroke-dasharray:6,2;filter: drop-shadow(0 0 8px #6ec6ff);" />`;
+    } else {
+        // Simple straight bolt
+        bolt = document.createElement('div');
+        bolt.className = 'thunder-bolt';
+        bolt.style.left = Math.random() * 90 + 'vw';
+        bolt.style.top = (Math.random() * 80 + 5) + 'vh';
+        bolt.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+    }
+    boltsContainer.appendChild(bolt);
+    setTimeout(() => {
+        bolt.remove();
+    }, 700);
+}
+
+// Thunder loop: only in dark mode
+let thunderInterval = null;
+function startThunder() {
+    if (thunderInterval) return;
+    thunderInterval = setInterval(() => {
+        if (Math.random() > 0.6) {
+            createThunderBolt();
+        }
+    }, 400);
+}
+function stopThunder() {
+    clearInterval(thunderInterval);
+    thunderInterval = null;
+    document.querySelectorAll('.thunder-bolt, .thunder-bolts svg').forEach(b => b.remove());
+}
+
+// Listen for dark mode toggle
+function checkThunderMode() {
+    if (document.body.classList.contains('dark-theme')) {
+        startThunder();
+    } else {
+        stopThunder();
+    }
+}
+checkThunderMode();
+const observer = new MutationObserver(checkThunderMode);
+observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+
